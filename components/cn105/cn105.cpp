@@ -286,15 +286,6 @@ void CN105Climate::setupUART() {
 
 void CN105Climate::setHeatpumpConnected(bool state) {
     this->isHeatpumpConnected_ = state;
-    if (this->hp_uptime_connection_sensor_ != nullptr) {
-        if (state) {
-            this->hp_uptime_connection_sensor_->start();
-            ESP_LOGD(TAG, "starting hp_uptime_connection_sensor_ uptime chrono");
-        } else {
-            this->hp_uptime_connection_sensor_->stop();
-            ESP_LOGD(TAG, "stopping hp_uptime_connection_sensor_ uptime chrono");
-        }
-    }
 }
 void CN105Climate::disconnectUART() {
     ESP_LOGD(TAG, "disconnectUART()");
