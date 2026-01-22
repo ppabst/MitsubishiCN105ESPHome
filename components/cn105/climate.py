@@ -303,9 +303,6 @@ CONFIG_SCHEMA = (
                 cv.update_interval
             ),
             cv.Optional(CONF_INSTALLER_MODE, default=False): cv.boolean,
-            cv.Optional(
-                CONF_HP_UP_TIME_CONNECTION_SENSOR
-            ): HP_UP_TIME_CONNECTION_SENSOR_SCHEMA,
             cv.Optional(CONF_AIRFLOW_CONTROL_SELECT): SELECT_SCHEMA,
             cv.Optional(CONF_AIR_PURIFIER_SWITCH): HVAC_OPTION_SWITCH_SCHEMA,
             cv.Optional(CONF_NIGHT_MODE_SWITCH): HVAC_OPTION_SWITCH_SCHEMA,
