@@ -1,6 +1,5 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components.uptime.sensor import UptimeSecondsSensor
 
 from esphome.components import (
     climate,
@@ -11,7 +10,6 @@ from esphome.components import (
     switch,
     binary_sensor,
     text_sensor,
-    uptime,
     number,
 )
 from esphome.components.uart import UARTParityOptions
@@ -52,10 +50,9 @@ AUTO_LOAD = [
     "switch",
     "text_sensor",
     "uart",
-    "uptime",
     "number",
 ]
-DEPENDENCIES = ["uart", "uptime"]  # Garder uart ici aussi
+DEPENDENCIES = ["uart"]  # Garder uart ici aussi
 
 CONF_SUPPORTS = "supports"
 CONF_SUPPORTS_HORIZONTAL_VANE_MODE = "horizontal_vane_mode"
@@ -75,7 +72,6 @@ CONF_FUNCTIONS_SET_VALUE = "functions_set_value"
 CONF_STAGE_SENSOR = "stage_sensor"
 CONF_SUB_MODE_SENSOR = "sub_mode_sensor"
 CONF_AUTO_SUB_MODE_SENSOR = "auto_sub_mode_sensor"
-CONF_HP_UP_TIME_CONNECTION_SENSOR = "hp_uptime_connection_sensor"
 CONF_USE_AS_OPERATING_FALLBACK = "use_as_operating_fallback"  # Nouvelle constante
 CONF_FAHRENHEIT_SUPPORT_MODE = "fahrenheit_compatibility"
 CONF_AIRFLOW_CONTROL_SELECT = "airflow_control_select"
@@ -135,10 +131,6 @@ FunctionsNumber = cg.global_ns.class_("FunctionsNumber", number.Number, cg.Compo
 SubModSensor = cg.global_ns.class_("SubModSensor", text_sensor.TextSensor, cg.Component)
 AutoSubModSensor = cg.global_ns.class_(
     "AutoSubModSensor", text_sensor.TextSensor, cg.Component
-)
-uptime_ns = cg.esphome_ns.namespace("esphome").namespace("uptime")
-HpUpTimeConnectionSensor = uptime_ns.class_(
-    "HpUpTimeConnectionSensor", sensor.Sensor, cg.PollingComponent
 )
 FlowControlSensor = cg.global_ns.class_(
     "FlowControlSensor", text_sensor.TextSensor, cg.Component
@@ -239,16 +231,6 @@ STAGE_SENSOR_CONFIG_SCHEMA = text_sensor.text_sensor_schema(StageSensor).extend(
     }
 )
 
-# Schéma pour HP_UP_TIME_CONNECTION_SENSOR (identique à votre version)
-HP_UP_TIME_CONNECTION_SENSOR_SCHEMA = sensor.sensor_schema(
-    HpUpTimeConnectionSensor,
-    unit_of_measurement=UNIT_SECOND,
-    icon=ICON_TIMER,
-    accuracy_decimals=0,
-    state_class=STATE_CLASS_TOTAL_INCREASING,
-    device_class=DEVICE_CLASS_DURATION,
-    entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-).extend(cv.polling_component_schema("60s"))
 
 HVAC_OPTION_SWITCH_SCHEMA = switch.switch_schema(HVACOptionSwitch).extend(
     {cv.GenerateID(CONF_ID): cv.declare_id(HVACOptionSwitch)}
@@ -573,12 +555,6 @@ def to_code(config):
             config[CONF_AUTO_SUB_MODE_SENSOR]
         )
         cg.add(var.set_auto_sub_mode_sensor(tsensor_var))
-
-    if CONF_HP_UP_TIME_CONNECTION_SENSOR in config:
-        conf = config[CONF_HP_UP_TIME_CONNECTION_SENSOR]
-        hp_connection_sensor_ = yield sensor.new_sensor(conf)
-        yield cg.register_component(hp_connection_sensor_, conf)
-        cg.add(var.set_hp_uptime_connection_sensor(hp_connection_sensor_))
 
     if CONF_HARDWARE_SETTINGS in config:
         hw_config = config[CONF_HARDWARE_SETTINGS]
